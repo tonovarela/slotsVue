@@ -1,13 +1,13 @@
 <template>
   <dialog class="modal" :open="open">
     <div class="modal-box">
-      <div class="border-b border-blue-500">
+      <div class="">
         <slot name="header"></slot>
       </div>
-      <div class="my-5">        
+      <div class="my-5">
         <slot name="body"></slot>
       </div>
-      <div class="border-t border-t-blue-500  pt-2">
+      <div class=" pt-2">
         <slot name="footer"></slot>
       </div>
     </div>

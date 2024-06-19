@@ -12,13 +12,23 @@
                             <th class="w-14">Completada</th>
                             <th>Tarea</th>
                             <th>Completada en</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="hover" v-for=" (task, index) in project.tasks">
-                            <th>{{ index + 1 }}</th>
+                        <tr class="hover" v-for=" task in project?.tasks">
+                            <th>
+                                <input @change="projectsStore.toogleTask(project?.id || '', task.id)" type="checkbox"
+                                    :checked="!!task.completeAt" class="checkbox checkbox-primary" />
+                            </th>
                             <td>{{ task.name }}</td>
-                            <td>Desktop Support Technician</td>
+                            <td>{{ task.completeAt }}</td>
+                            <td>
+                                <button @click="projectsStore.removeTask(project?.id || '', task.id)"
+                                    class="flex p-1.5 bg-red-500 rounded-xl hover:rounded-3xl hover:bg-red-600 transition-all duration-300 text-white">
+                                    <TrashIcon />
+                                </button>
+                            </td>
                         </tr>
                         <tr class="hover">
                             <td></td>
@@ -42,10 +52,16 @@
 </template>
 
 <script setup lang="ts">
-import Breadcrums from '@/modules/common/components/Breadcrums.vue';
-import { useProjectsStore } from '../stores/projects.store';
 import { watch, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+import { useProjectsStore } from '../stores/projects.store';
+import type { Project } from '../interfaces/project.interface';
+
+import Breadcrums from '@/modules/common/components/Breadcrums.vue';
+import TrashIcon from '@/modules/common/icons/TrashIcon.vue';
+
+
 interface Props {
     id: string;
 }
@@ -55,16 +71,18 @@ const props = defineProps<Props>();
 
 const projectsStore = useProjectsStore();
 const project = ref<Project | null>();
-const newModel = ref<string>('');
+
 const newTask = ref<string>('');
 
 watch(
     () => props.id,
     (newId) => {
-        project.value = projectsStore.projectList.find((project) => project.id === props.id);
+        project.value = projectsStore.projectList.find((project) => project.id === newId);
         if (!project.value) { router.replace('/'); }
     },
     { immediate: true }
 );
+
+
 
 </script>

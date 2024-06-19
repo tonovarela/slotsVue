@@ -26,6 +26,7 @@ interface Props {
     placeholder?: string;
     title?: string;
     subtitle?: string;
+    value?: string;
 }
 const emits = defineEmits<{
     close: [void];
@@ -35,18 +36,20 @@ const emits = defineEmits<{
 const props = withDefaults(defineProps<Props>(), {
     placeholder: "Ingrese el nombre del proyecto",
     title: "Hello!",
-    subtitle: "Press ESC key or click the button below to close"
+    subtitle: "Press ESC key or click the button below to close",
+    value: ""
 });
-
-const inputValue = ref('');
+const inputValue = ref<string>('');
 const inputRef = ref<HTMLInputElement | null>(null);
 
 watch(props, ({ open }) => {
     if (open) {
+        inputValue.value = props.value || '';
         inputRef.value?.focus();
     }
 
-});
+
+}, { immediate: true });
 
 
 
