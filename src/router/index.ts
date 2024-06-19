@@ -6,16 +6,13 @@ const routes = [
     path: '/',
     name: 'Home',
     component: ProjectLayout,
-    redirect: { name: 'Proyecto' },
+    redirect: { name: 'Projects' },
     children: [
-      {
-        path: '',
-        name: 'Proyecto',
-        component: () => import('@/modules/projects/views/ProjectView.vue'),
-      },
+      { path: '', name: 'Projects', component: () => import('@/modules/projects/views/ProjectsView.vue'), },
+      { path: '/project/:id', props: true, name: 'Project', component: () => import('@/modules/projects/views/ProjectView.vue') },
     ],
   },
-  //{ path: '/about', component: AboutView },
+
 ];
 
 const router = createRouter({

@@ -1,76 +1,70 @@
 <template>
+    <div class="w-full">
+        <section class="m-2">
+            <Breadcrums :name="project?.name ?? 'no-name'" />
+        </section>
 
-    <div class="overflow-x-auto text-white w-full">
-        <table class="table">
-            <!-- head -->
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Proyecto</th>
-                    <th>Tareas</th>
-                    <th>Avance</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- row 1 -->
-                <tr class="hover">
-                    <th>1</th>
-                    <td>Cy Ganderton</td>
-                    <td>Quality Control Specialist</td>
-                    <td>Blue</td>
-                </tr>
+        <section class="m-3">
+            <div class="overflow-x-auto">
+                <table class="table table-zebra">
+                    <thead>
+                        <tr>
+                            <th class="w-14">Completada</th>
+                            <th>Tarea</th>
+                            <th>Completada en</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover" v-for=" (task, index) in project.tasks">
+                            <th>{{ index + 1 }}</th>
+                            <td>{{ task.name }}</td>
+                            <td>Desktop Support Technician</td>
+                        </tr>
+                        <tr class="hover">
+                            <td></td>
+                            <td colspan="2">
+                                <input type="text" v-model="newTask"
+                                    @keyup.enter="projectsStore.addTask(props.id, newTask); newTask = ''"
+                                    class="input input-primary hover:opacity-100 focus:opacity-100 w-full opacity-60 transition-all"
+                                    placeholder="Nueva tarea">
+                            </td>
 
-            </tbody>
-        </table>
-        <input-modal :open="modalOpen" title="Nuevo Proyecto" subtitle=" Dale un nombre único a tu proyecto"
-            placeholder="Ingrese el nombre del proyecto" @close="cerrarModal" @value="onNewProject" />                    
-       <custom-modal  :open="customModalOpen">
-        <template #header>
-            <h1 class="text-3xl">Cabecera</h1>
-        </template>
-        <template #body>
-            <h1>Varela </h1>
-        </template>
-        <template #footer>
-            <div class="flex justify-end mt-5">
-                        <button class="btn mr-4" @click="customModalOpen=false">Close</button>
-                        <button type="submit"  @click="customModalOpen=false" class="btn btn-primary">Aceptar</button>
-                    </div>
-        </template>
-                    
-        </custom-modal>            
+                        </tr>
 
-        <fab-button @click="modalOpen = true">
-            <add-circle />
-        </fab-button>
-        <fab-button @click="customModalOpen = true" position="bottom-left">
-            <code-icon />
-        </fab-button>
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
     </div>
+
 </template>
 
 <script setup lang="ts">
-import FabButton from '@/modules/common/components/FabButton.vue';
-import AddCircle from '@/modules/common/icons/AddCircle.vue';
-import CodeIcon from '@/modules/common/icons/CodeIcon.vue';
-import InputModal from '@/modules/common/components/InputModal.vue';
-import CustomModal from '@/modules/common/components/CustomModal.vue';
-import { ref } from 'vue';
+import Breadcrums from '@/modules/common/components/Breadcrums.vue';
+import { useProjectsStore } from '../stores/projects.store';
+import { watch, ref } from 'vue';
+import { useRouter } from 'vue-router';
+interface Props {
+    id: string;
+}
+const router = useRouter();
 
-const modalOpen = ref(false);
-const customModalOpen = ref(false);
+const props = defineProps<Props>();
 
-const cerrarModal = () => {
-    modalOpen.value = false;
-};
+const projectsStore = useProjectsStore();
+const project = ref<Project | null>();
+const newModel = ref<string>('');
+const newTask = ref<string>('');
 
-const onNewProject = (project: string) => {
-    console.log(project);
-
-};
-
-
-
+watch(
+    () => props.id,
+    (newId) => {
+        project.value = projectsStore.projectList.find((project) => project.id === props.id);
+        if (!project.value) { router.replace('/'); }
+    },
+    { immediate: true }
+);
 
 </script>

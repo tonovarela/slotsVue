@@ -20,7 +20,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 interface Props {
     open: boolean;
     placeholder?: string;
@@ -32,7 +32,7 @@ const emits = defineEmits<{
     value: [text: string];
 }>();
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     placeholder: "Ingrese el nombre del proyecto",
     title: "Hello!",
     subtitle: "Press ESC key or click the button below to close"
@@ -40,6 +40,15 @@ withDefaults(defineProps<Props>(), {
 
 const inputValue = ref('');
 const inputRef = ref<HTMLInputElement | null>(null);
+
+watch(props, ({ open }) => {
+    if (open) {
+        inputRef.value?.focus();
+    }
+
+});
+
+
 
 const submitValue = () => {
     if (!inputValue.value) {
